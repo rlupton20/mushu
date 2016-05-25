@@ -25,9 +25,10 @@
 ;; the session list.
 (defun ssh-rename (name)
   (let
-      ((buf (buffer-name)))
+      ((buf (buffer-name))
+       (new-session-list (subst name buf ssh-sessions)))
     (rename-buffer name)
-    (setq ssh-sessions (subst name buf ssh-sessions))))
+    (setq ssh-sessions new-session-list)))
 
   
 ;; (ssh-term host) opens a new ssh session to host, and returns
