@@ -11,8 +11,6 @@ hardcoded list of hosts
 
 To do:
 
-* Sensible buffer naming (so you can have more than one session at a
-  time with the same host);
 * A "nice" way to specify host lists (possibly with custom switches);
 * Integrate file editing with tramp;
 * Logging;
