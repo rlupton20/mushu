@@ -27,19 +27,23 @@
 (defun ssh-rename (name)
   (let
       ((buf (buffer-name))
-       (new-session-list (string-subst name buf ssh-sessions)))
-    (rename-buffer name)
+       (new-session-list
+	(string-subst (rename-buffer name t) buf ssh-sessions)))
     (setq ssh-sessions new-session-list)))
 
 ;; (ssh-term host) opens a new ssh session to host, and returns
 ;; the new buffer created.
 (defun ssh-term (host)
-  (setq ssh-buffer-name (concat "*" host "*")) 
-  (set-buffer (apply 'term-ansi-make-term ssh-buffer-name "ssh" nil (list host)))
-  (term-mode)
-  (term-char-mode)
-  (add-to-list 'ssh-sessions ssh-buffer-name)
-  (switch-to-buffer ssh-buffer-name))
+  (let
+      ((ssh-buffer-name
+	(generate-new-buffer-name (concat "*" host "*")))
+       (args (list host)))
+    (set-buffer
+     (apply 'term-ansi-make-term ssh-buffer-name "ssh" nil args))
+    (term-mode)
+    (term-char-mode)
+    (add-to-list 'ssh-sessions ssh-buffer-name)
+    (switch-to-buffer ssh-buffer-name)))
 
 ;; helm-new-ssh-session uses a helm menu to create a new ssh session
 ;; with a host on the list host-list
