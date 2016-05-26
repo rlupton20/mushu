@@ -1,3 +1,4 @@
+;;; MUSHU
 ;; An ssh connection manager (integrated with helm)
 (require 'term)
 (setq host-list '("localhost"))
@@ -14,11 +15,11 @@
    (t (filter pred (cdr lst)))))
 
 ;; subst replaces the first occurence of old in lst with new
-(defun subst (new old lst)
+(defun string-subst (new old lst)
   (cond
    ((null lst) '())
-   ((eq old (car lst)) (cons new (cdr lst)))
-   (t (cons (car lst) (subst new old (cdr lst))))))
+   ((string= old (car lst)) (cons new (cdr lst)))
+   (t (cons (car lst) (string-subst new old (cdr lst))))))
 
 ;; ssh-rename lets us rename an ssh session (assuming we are in the
 ;; buffer we want to rename). It both renames the buffer, and updates
@@ -26,11 +27,10 @@
 (defun ssh-rename (name)
   (let
       ((buf (buffer-name))
-       (new-session-list (subst name buf ssh-sessions)))
+       (new-session-list (string-subst name buf ssh-sessions)))
     (rename-buffer name)
     (setq ssh-sessions new-session-list)))
 
-  
 ;; (ssh-term host) opens a new ssh session to host, and returns
 ;; the new buffer created.
 (defun ssh-term (host)
@@ -71,15 +71,13 @@
   (interactive "sSession name: ") 
   (let
       ((current (buffer-name))
-       (buf (helm-new-ssh-session)))
+       (new-buf (helm-new-ssh-session))
+       (buf (buffer-name)))
     (cond  ; Check we actually made a new buffer
-     ((eq current buf) (message "Error creating ssh buffer."))
+     ((string= current buf) (message "Error creating ssh buffer."))
      (t (ssh-rename name)))))
 
 ;; Some keybindings to test with
 (global-set-key (kbd "s-s") 'helm-switch-to-ssh-session)
 (global-set-key (kbd "s-c") 'helm-new-ssh-session)
 (global-set-key (kbd "C-s-c") 'helm-new-named-ssh-session)
-
-
-
