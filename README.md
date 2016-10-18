@@ -1,16 +1,14 @@
-sshman --- an ssh connection manager for emacs
+mushu - an ssh connection manager for emacs
 ==============================================
 
-Bout of madness. Amounts to me getting carried away with me getting
-carried away with my emacs configuration file. Its integrated with
-helm, so at this point there are small functions which, provided a
-hardcoded list of hosts
+`mushu` allows you to use emacs to launch ssh connections to remote hosts. It takes hosts from your ssh config file (located by default at `~/.ssh/config`), and creates an ssh client connection to the host in an emacs shell. Since it uses normal system `ssh` in the background, all the configuration from your ssh configuration file carries over.
 
-* connect to a host, selected with helm;
-* switch to a current connection, also selected with helm;
+# Features
+* connect to hosts using partial and fuzzy matching using helm;
+* move to another session - select using helm filtering;
+* no need for separate logging, everything is recorded in an emacs text buffer;
+* organization can be expanded using other emacs packages;
 
-To do:
+# Still to do:
 
-* A "nice" way to specify host lists (possibly with custom switches);
 * Integrate file editing with tramp;
-* Logging;
