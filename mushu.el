@@ -1,9 +1,19 @@
 ;;; MUSHU
 ;; An ssh connection manager (integrated with helm)
 (require 'term)
-(setq host-list '("localhost"))
+
+(setq mushu-ssh-conf "~/.ssh/config")
+
 
 (setq ssh-sessions '())
+
+(defun mushu-get-hosts (file)
+  (split-string
+    (shell-command-to-string
+    (concat "grep \"Host \" " file " | awk '{ print $2 }'"))))
+
+(defun mushu-host-list ()
+  (mushu-get-hosts mushu-ssh-conf))
 
 ;; filter is a utility function - it returns the elements of list lst
 ;; which fulfil a predicate pred
@@ -21,10 +31,10 @@
    ((string= old (car lst)) (cons new (cdr lst)))
    (t (cons (car lst) (string-subst new old (cdr lst))))))
 
-;; ssh-rename lets us rename an ssh session (assuming we are in the
+;; mush-ssh-rename lets us rename an ssh session (assuming we are in the
 ;; buffer we want to rename). It both renames the buffer, and updates
 ;; the session list.
-(defun ssh-rename (name)
+(defun mushu-ssh-rename (name)
   (let
       ((buf (buffer-name))
        (new-session-list
@@ -46,11 +56,12 @@
     (switch-to-buffer ssh-buffer-name)))
 
 ;; helm-new-ssh-session uses a helm menu to create a new ssh session
-;; with a host on the list host-list
+;; with a host on the list (mushu-host-list)
 (defun helm-new-ssh-session ()
   (interactive)
   (let
-      ((helm-outline-hosts '((name . "Hosts")
+      ((host-list (mushu-host-list))
+      (helm-outline-hosts '((name . "Hosts")
 			     (candidates . host-list)
 			     (action . ssh-term))))
     (helm :sources '(helm-outline-hosts))))
@@ -79,7 +90,7 @@
        (buf (buffer-name)))
     (cond  ; Check we actually made a new buffer
      ((string= current buf) (message "Error creating ssh buffer."))
-     (t (ssh-rename name)))))
+     (t (mush-ssh-rename name)))))
 
 ;; Some keybindings to test with
 (global-set-key (kbd "s-s") 'helm-switch-to-ssh-session)
