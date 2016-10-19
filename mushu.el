@@ -1,6 +1,7 @@
 ;;; mushu.el
 ;; An ssh connection manager (integrated with helm)
 (require 'term)
+(require 'helm)
 
 (setq mushu-ssh-conf "~/.ssh/config")
 
@@ -94,5 +95,7 @@
     (cond  ; Check we actually made a new buffer
      ((string= current buf) (message "Error creating ssh buffer."))
      (t (mushu-ssh-rename name)))))
+
+(provide 'mushu)
 
 ;;; end mushu.el
